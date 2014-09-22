@@ -107,15 +107,13 @@ public class Launch {
                     }
                 }
 
-                // Now, iterate all the tweakers we just instantiated
-                for (final Iterator<ITweaker> it = tweakers.iterator(); it.hasNext(); ) {
-                    final ITweaker tweaker = it.next();
+                // Work around some tweakers doing Bad Things
+                while (!tweakers.isEmpty()) {
+                    final ITweaker tweaker = tweakers.remove(0);
                     LogWrapper.log(Level.INFO, "Calling tweak class %s", tweaker.getClass().getName());
                     tweaker.acceptOptions(options.valuesOf(nonOption), minecraftHome, assetsDir, profileName);
                     tweaker.injectIntoClassLoader(classLoader);
                     allTweakers.add(tweaker);
-                    // again, remove from the list once we've processed it, so we don't get duplicates
-                    it.remove();
                 }
                 // continue around the loop until there's no tweak classes
             } while (!tweakClassNames.isEmpty());
